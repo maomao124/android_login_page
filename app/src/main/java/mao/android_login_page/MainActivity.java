@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private CheckBox ck_remember;
     private EditText et_phone;
     private RadioButton rb_password;
-    private RadioButton rb_verifycode;
+    private RadioButton rb_verifyCode;
     private ActivityResultLauncher<Intent> register;
+    @SuppressWarnings("all")
     private Button btn_login;
     private String password = "123456";
     private String verifyCode;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         btn_forget = findViewById(R.id.btn_forget);
         ck_remember = findViewById(R.id.ck_remember);
         rb_password = findViewById(R.id.rb_password);
-        rb_verifycode = findViewById(R.id.rb_verifycode);
+        rb_verifyCode = findViewById(R.id.rb_verifycode);
         btn_login = findViewById(R.id.btn_login);
         // 给rg_login设置单选监听器
         rb_login.setOnCheckedChangeListener(this);
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             // 提示用户登录成功
             loginSuccess();
         }
-        else if (rb_verifycode.isChecked())
+        else if (rb_verifyCode.isChecked())
         {
             if (verifyCode == null)
             {
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             intent.putExtra("phone", phone);
             register.launch(intent);
         }
-        else if (rb_verifycode.isChecked())
+        else if (rb_verifyCode.isChecked())
         {
             // 生成六位随机数字的验证码
             verifyCode = String.format("%06d", new Random().nextInt(999999));
