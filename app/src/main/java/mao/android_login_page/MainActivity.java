@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton rb_verifycode;
     private ActivityResultLauncher<Intent> register;
     private Button btn_login;
-    private String mPassword = "111111";
-    private String mVerifyCode;
+    private String password = "123456";
+    private String verifyCode;
 
     private static final String TAG = "loginPage";
 
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 if (intent != null && result.getResultCode() == Activity.RESULT_OK)
                 {
                     // 用户密码已改为新密码，故更新密码变量
-                    mPassword = intent.getStringExtra("new_password");
+                    password = intent.getStringExtra("new_password");
                 }
             }
         });
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     {
         if (rb_password.isChecked())
         {
-            if (!mPassword.equals(et_password.getText().toString()))
+            if (!password.equals(et_password.getText().toString()))
             {
                 Toast.makeText(this, "请输入正确的密码", Toast.LENGTH_SHORT).show();
                 return;
@@ -192,13 +192,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
         else if (rb_verifycode.isChecked())
         {
-            if (mVerifyCode==null)
+            if (verifyCode ==null)
             {
                 Toast.makeText(this, "请先获取验证码", Toast.LENGTH_SHORT).show();
                 return;
             }
             // 验证码方式校验
-            if (!mVerifyCode.equals(et_password.getText().toString()))
+            if (!verifyCode.equals(et_password.getText().toString()))
             {
                 Toast.makeText(this, "请输入正确的验证码", Toast.LENGTH_SHORT).show();
                 return;
@@ -226,11 +226,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         else if (rb_verifycode.isChecked())
         {
             // 生成六位随机数字的验证码
-            mVerifyCode = String.format("%06d", new Random().nextInt(999999));
+            verifyCode = String.format("%06d", new Random().nextInt(999999));
             // 以下弹出提醒对话框，提示用户记住六位验证码数字
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("请记住验证码");
-            builder.setMessage("手机号" + phone + ",本次验证码是" + mVerifyCode + ",请输入验证码");
+            builder.setMessage("手机号" + phone + ",本次验证码是" + verifyCode + ",请输入验证码");
             builder.setPositiveButton("好的", null);
             AlertDialog dialog = builder.create();
             dialog.show();
