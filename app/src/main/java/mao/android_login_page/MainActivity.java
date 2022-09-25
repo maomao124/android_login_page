@@ -6,16 +6,26 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Random;
 
 /**
  * Class(类名): MainActivity
@@ -41,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private Button btn_login;
     private String mPassword = "111111";
     private String mVerifyCode;
+
+    private static final String TAG = "loginPage";
 
 
     @Override
@@ -98,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         else
         {
             //异常
+            Log.w(TAG, "onCheckedChanged: error");
         }
        /* switch (checkedId)
         {
@@ -130,8 +143,163 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     public void onClick(View v)
     {
+        //获取手机号码
+        String phone = et_phone.getText().toString();
+        if (phone.length() < 11)
+        {
+            Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (v.getId() == R.id.btn_forget)
+        {
+            // 选择了密码方式校验，此时要跳到找回密码页面
+            clickForget(phone);
+        }
+        else if (v.getId() == R.id.btn_login)
+        {
+            // 密码方式校验
+            clickLogin();
+        }
+        else
+        {
+            Log.w(TAG, "onClick: error");
+        }
 
+        /*switch (v.getId())
+        {
+            case R.id.btn_forget:
+                // 选择了密码方式校验，此时要跳到找回密码页面
+                clickForget(phone);
+                break;
+            case R.id.btn_login:
+                // 密码方式校验
+                clickLogin();
+                break;
+        }*/
     }
 
+    private void clickLogin()
+    {
+        if (rb_password.isChecked())
+        {
+            if (!mPassword.equals(et_password.getText().toString()))
+            {
+                Toast.makeText(this, "请输入正确的密码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // 提示用户登录成功
+            loginSuccess();
+        }
+        else if (rb_verifycode.isChecked())
+        {
+            // 验证码方式校验
+            if (!mVerifyCode.equals(et_password.getText().toString()))
+            {
+                Toast.makeText(this, "请输入正确的验证码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // 提示用户登录成功
+            loginSuccess();
+        }
+    }
+
+    /**
+     * 处理点击忘记密码选项
+     *
+     * @param phone 电话
+     */
+    @SuppressLint("DefaultLocale")
+    private void clickForget(String phone)
+    {
+        if (rb_password.isChecked())
+        {
+            // 以下携带手机号码跳转到找回密码页面
+            Intent intent = new Intent(this, MainActivity2.class);
+            intent.putExtra("phone", phone);
+            register.launch(intent);
+        }
+        else if (rb_verifycode.isChecked())
+        {
+            // 生成六位随机数字的验证码
+            mVerifyCode = String.format("%06d", new Random().nextInt(999999));
+            // 以下弹出提醒对话框，提示用户记住六位验证码数字
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("请记住验证码");
+            builder.setMessage("手机号" + phone + ",本次验证码是" + mVerifyCode + ",请输入验证码");
+            builder.setPositiveButton("好的", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    /**
+     * 登录成功
+     */
+    private void loginSuccess()
+    {
+        String desc = String.format("您的手机号码是%s，恭喜你通过登录验证，点击“确定”按钮返回上个页面",
+                et_phone.getText().toString());
+        // 以下弹出提醒对话框，提示用户登录成功
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("登录成功");
+        builder.setMessage(desc);
+        builder.setPositiveButton("确定返回", (dialog, which) ->
+        {
+            // 结束当前的活动页面
+            finish();
+        });
+        builder.setNegativeButton("我再看看", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private class HideTextWatcher implements TextWatcher
+    {
+        private final EditText editText;
+        private final int maxLength;
+
+        public HideTextWatcher(EditText v, int maxLength)
+        {
+            this.editText = v;
+            this.maxLength = maxLength;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+            if (s.toString().length() == maxLength)
+            {
+                // 隐藏输入法软键盘
+                closeInput(MainActivity.this, editText);
+            }
+        }
+    }
+
+    /**
+     * 关闭(隐藏)输入法
+     *
+     * @param activity 活动
+     * @param view     视图
+     */
+    public void closeInput(Activity activity, View view)
+    {
+        //从系统服务中获取输入法管理器
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        //关闭屏幕上的输入法软键盘
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
 }
