@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
         else if (rb_verifycode.isChecked())
         {
-            if (verifyCode ==null)
+            if (verifyCode == null)
             {
                 Toast.makeText(this, "请先获取验证码", Toast.LENGTH_SHORT).show();
                 return;
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     }
 
 
-    private class HideTextWatcher implements TextWatcher
+    class HideTextWatcher implements TextWatcher
     {
         private final EditText editText;
         private final int maxLength;

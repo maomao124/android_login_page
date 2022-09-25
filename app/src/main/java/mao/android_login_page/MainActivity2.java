@@ -5,12 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.material.internal.TextWatcherAdapter;
 
 import java.util.Random;
 
@@ -35,6 +41,7 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
     public static final String TAG = "forget_password_page";
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -49,6 +56,82 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.btn_verifycode).setOnClickListener(this);
         findViewById(R.id.btn_confirm).setOnClickListener(this);
+
+        et_password_first.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().length() == 6)
+                {
+                    // 隐藏输入法软键盘
+                    closeInput(MainActivity2.this, et_password_first);
+                }
+            }
+        });
+
+        et_password_second.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().length() == 6)
+                {
+                    // 隐藏输入法软键盘
+                    closeInput(MainActivity2.this, et_password_second);
+                }
+            }
+        });
+
+        et_verifyCode.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                if (s.toString().length() == 6)
+                {
+                    // 隐藏输入法软键盘
+                    closeInput(MainActivity2.this, et_verifyCode);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -90,6 +173,11 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
             return;
         }
 
+        if (verifyCode == null)
+        {
+            Toast.makeText(this, "请先获取验证码", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!verifyCode.equals(et_verifyCode.getText().toString()))
         {
             Toast.makeText(this, "请输入正确的验证码", Toast.LENGTH_SHORT).show();
@@ -119,5 +207,20 @@ public class MainActivity2 extends AppCompatActivity implements View.OnClickList
         builder.setPositiveButton("好的", null);
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    /**
+     * 关闭(隐藏)输入法
+     *
+     * @param activity 活动
+     * @param view     视图
+     */
+    public void closeInput(Activity activity, View view)
+    {
+        //从系统服务中获取输入法管理器
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        //关闭屏幕上的输入法软键盘
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
