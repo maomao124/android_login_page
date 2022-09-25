@@ -192,6 +192,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
         else if (rb_verifycode.isChecked())
         {
+            if (mVerifyCode==null)
+            {
+                Toast.makeText(this, "请先获取验证码", Toast.LENGTH_SHORT).show();
+                return;
+            }
             // 验证码方式校验
             if (!mVerifyCode.equals(et_password.getText().toString()))
             {
